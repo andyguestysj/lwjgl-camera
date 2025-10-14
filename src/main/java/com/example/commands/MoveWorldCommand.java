@@ -39,5 +39,7 @@ public class MoveWorldCommand implements Command {
       
     }
   }
+
+  public Command getCommand() { return this;  };
 }
       

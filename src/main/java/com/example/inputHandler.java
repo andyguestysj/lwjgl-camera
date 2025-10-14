@@ -5,17 +5,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import com.example.commands.*;
 
 public class inputHandler {
-    
-  private Command buttonW_ = null;
-	private Command buttonS_ = null;
-  private Command buttonA_ = null;
-	private Command buttonD_ = null;
-	private Command buttonUp_ = null;
-	private Command buttonDown_ = null;
-	private Command buttonLeft_ = null;
-	private Command buttonRight_ = null;
-
-	private Command[] commands = new Command[350];
+  
+	private CommandQueue commandQueue = new CommandQueue();
+  private Command[] commands = new Command[350];
 
 
 	private boolean[] keyState = new boolean[350]; // Array to hold button states
@@ -43,7 +35,8 @@ public class inputHandler {
 
 		for (int i=0; i<commands.length; i++){
 			if (commands[i] != null && isPressed(i)){
-				commands[i].execute();
+				//commands[i].execute();
+				commandQueue.addCommand(commands[i]);
 			}
 		}
 	}
@@ -64,6 +57,10 @@ public class inputHandler {
 
 	public void releaseKey(int button){
 		keyState[button] = false;
+	}
+
+	public void executeCommands() {
+		commandQueue.executeCommands();
 	}
 
 

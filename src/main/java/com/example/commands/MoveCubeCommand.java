@@ -39,5 +39,8 @@ public class MoveCubeCommand implements Command {
       
     }
   }
+
+  public Command getCommand() { return this;  };
+
 }
       

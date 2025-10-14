@@ -158,7 +158,14 @@ public class Main {
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {		
+			// read input
 			inputHandler.handleInput();
+
+			// update
+
+			inputHandler.executeCommands();
+
+			// render
 
 			Render();
 

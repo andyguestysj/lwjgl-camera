@@ -43,5 +43,5 @@ public class RotateWorldCommand implements Command {
       }
     }
   }
-
+  public Command getCommand() { return this;  };
 }
