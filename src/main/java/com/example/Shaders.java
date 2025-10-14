@@ -28,7 +28,7 @@ public class Shaders {
 		int programID = glCreateProgram();
 
 		int vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-		String vertexShaderCode = Utils.readFile("core/resources/shaders/shader.vert");    
+		String vertexShaderCode = Utils.readFile("resources/shaders/shader.vert");    
 		glShaderSource(vertexShaderID, vertexShaderCode);
     glCompileShader(vertexShaderID);
 		if (vertexShaderID == 0) {
@@ -38,7 +38,7 @@ public class Shaders {
     glAttachShader(programID, vertexShaderID);
 
 		int fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		String fragShaderCode = Utils.readFile("core/resources/shaders/shader.frag");
+		String fragShaderCode = Utils.readFile("resources/shaders/shader.frag");
     glShaderSource(fragmentShaderID, fragShaderCode);
     glCompileShader(fragmentShaderID);
 		if (fragmentShaderID == 0) {
