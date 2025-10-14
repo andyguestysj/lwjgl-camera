@@ -123,9 +123,11 @@ public class Main {
 	public int WIDTH = 1000;
 	public int HEIGHT = 1000;
 
-	Vector3f offset;
-	Vector3f rotation;
-	float scale;
+	public 	Vector3f offset;
+	public 	Vector3f rotation;
+	public 	float scale;
+
+	public inputHandler inputHandler;
 	
 	public static void main(String[] args) throws Exception {
 		new Main().run();
@@ -140,6 +142,10 @@ public class Main {
 
 		initialiseWorldView();
 		initialiseGraphics();
+
+		inputHandler = new inputHandler(this);
+
+
 		makeObjects();
 	
 		loop();
@@ -152,7 +158,7 @@ public class Main {
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {		
-			do_key_stuff();
+			inputHandler.handleInput();
 
 			Render();
 
@@ -189,55 +195,6 @@ public class Main {
 		glBindVertexArray(0);
 		glUseProgram(0);
 
-		
-	}
-
-	private void do_key_stuff(){
-
-		if (KEY_D_DOWN){
-			rotation.y += 1f;
-			if (rotation.y>360f) rotation.y -= 360f;
-		}
-		if (KEY_A_DOWN){
-			rotation.y -= 1f;
-			if (rotation.y<0) rotation.y += 360f;
-		}
-		if (KEY_W_DOWN){
-			rotation.x += 1f;
-			if (rotation.z>360f) rotation.z -= 360f;
-		}
-		if (KEY_S_DOWN){
-			rotation.x -= 1f;
-			if (rotation.z<0f) rotation.z += 360f;
-		}
-
-
-		if (KEY_LEFT_DOWN){
-			offset.x += 0.01f;
-		}
-		if (KEY_RIGHT_DOWN){
-			offset.x -= 0.01f;
-		}
-		if (KEY_DOWN_DOWN){
-			offset.z -= 0.01f;
-		}
-		if (KEY_UP_DOWN){
-			offset.z += 0.01f;
-		}
-
-		if (KEY_I_DOWN){			
-			meshObjects.getFirst().setPosZ(-0.01f);
-		}
-		if (KEY_K_DOWN){			
-			meshObjects.getFirst().setPosZ(0.01f);
-		}
-
-		if (KEY_J_DOWN){			
-			meshObjects.getFirst().setPosX(-0.01f);
-		}
-		if (KEY_L_DOWN){			
-			meshObjects.getFirst().setPosX(0.01f);
-		}
 		
 	}
 
@@ -299,12 +256,6 @@ public class Main {
 		glClearColor( 0.0F, 0.0F, 0.0F, 1 );
 		glEnable(GL_DEPTH_TEST);
 	}
-
-
-	
-
-
-
 
 	public void initialiseWorldView(){
 
@@ -476,41 +427,10 @@ public class Main {
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop				
 		}
 
-		if (key == GLFW_KEY_W && action == GLFW_PRESS) KEY_W_DOWN = true;
-		else if (key == GLFW_KEY_W && action == GLFW_RELEASE) KEY_W_DOWN = false;
-
-		if (key == GLFW_KEY_A && action == GLFW_PRESS) KEY_A_DOWN = true;
-		else if (key == GLFW_KEY_A && action == GLFW_RELEASE) KEY_A_DOWN = false;
-
-		if (key == GLFW_KEY_S && action == GLFW_PRESS) KEY_S_DOWN = true;
-		else if (key == GLFW_KEY_S && action == GLFW_RELEASE) KEY_S_DOWN = false;
-
-		if (key == GLFW_KEY_D && action == GLFW_PRESS) KEY_D_DOWN = true;
-		else if (key == GLFW_KEY_D && action == GLFW_RELEASE) KEY_D_DOWN = false;
-
-		if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) KEY_LEFT_DOWN = true;
-		else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) KEY_LEFT_DOWN = false;
-
-		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) KEY_RIGHT_DOWN = true;
-		else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) KEY_RIGHT_DOWN = false;
-
-		if (key == GLFW_KEY_UP && action == GLFW_PRESS) KEY_UP_DOWN = true;
-		else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) KEY_UP_DOWN = false;
-
-		if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) KEY_DOWN_DOWN = true;
-		else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) KEY_DOWN_DOWN = false;
-
-		if (key == GLFW_KEY_I && action == GLFW_PRESS) KEY_I_DOWN = true;
-		else if (key == GLFW_KEY_I && action == GLFW_RELEASE) KEY_I_DOWN = false;
-
-		if (key == GLFW_KEY_K && action == GLFW_PRESS) KEY_K_DOWN = true;
-		else if (key == GLFW_KEY_K && action == GLFW_RELEASE) KEY_K_DOWN = false;
-
-		if (key == GLFW_KEY_J && action == GLFW_PRESS) KEY_J_DOWN = true;
-		else if (key == GLFW_KEY_J && action == GLFW_RELEASE) KEY_J_DOWN = false;
-
-		if (key == GLFW_KEY_L && action == GLFW_PRESS) KEY_L_DOWN = true;
-		else if (key == GLFW_KEY_L && action == GLFW_RELEASE) KEY_L_DOWN = false;
+		for (int i=0; i<350; i++) {
+			if (key == i && action == GLFW_PRESS) inputHandler.pressKey(i);
+			else if (key == i && action == GLFW_RELEASE) inputHandler.releaseKey(i);
+		}
 	}
 
 

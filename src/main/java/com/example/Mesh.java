@@ -187,6 +187,8 @@ public class Mesh {
 
 	public float getPosX(){ return pos.x;}
 	public void setPosX(float deltaX) {pos.add(deltaX,0.0f,0.0f);}
+	public float getPosY(){ return pos.y;}
+	public void setPosY(float deltaY) {pos.add(0f,deltaY,0.0f);}
 	public float getPosZ(){ return pos.z;}
 	public void setPosZ(float deltaZ) {pos.add(0.0f,0.0f,deltaZ);}
 
