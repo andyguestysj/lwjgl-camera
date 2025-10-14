@@ -159,7 +159,7 @@ public class Main {
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {		
 			// read input
-			inputHandler.handleInput();
+			inputHandler.processInput();
 
 			// update
 

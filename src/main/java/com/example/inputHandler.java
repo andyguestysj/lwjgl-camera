@@ -31,7 +31,7 @@ public class inputHandler {
 		commands[GLFW_KEY_J] = setButton(new MoveCubeCommand(main, Command.X, true));
 		commands[GLFW_KEY_L] = setButton(new MoveCubeCommand(main, Command.X, false));						}
 
-	public void handleInput(){
+	public void processInput(){
 
 		for (int i=0; i<commands.length; i++){
 			if (commands[i] != null && isPressed(i)){
