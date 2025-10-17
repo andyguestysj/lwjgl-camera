@@ -35,7 +35,6 @@ public class inputHandler {
 
 		for (int i=0; i<commands.length; i++){
 			if (commands[i] != null && isPressed(i)){
-				//commands[i].execute();
 				commandQueue.addCommand(commands[i]);
 			}
 		}

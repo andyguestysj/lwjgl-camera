@@ -98,18 +98,6 @@ public class Main {
 	public float rotateY;
 	public float rotateZ;
 
-	public boolean KEY_A_DOWN = false;
-	public boolean KEY_D_DOWN = false;
-	public boolean KEY_W_DOWN = false;
-	public boolean KEY_S_DOWN = false;
-	public boolean KEY_LEFT_DOWN = false;
-	public boolean KEY_RIGHT_DOWN = false;
-	public boolean KEY_UP_DOWN = false;
-	public boolean KEY_DOWN_DOWN = false;
-	public boolean KEY_I_DOWN = false;
-	public boolean KEY_K_DOWN = false;
-	public boolean KEY_J_DOWN = false;
-	public boolean KEY_L_DOWN = false;
 
 
 
