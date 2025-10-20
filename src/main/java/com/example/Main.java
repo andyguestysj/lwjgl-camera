@@ -79,8 +79,10 @@ import com.example.*;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import imgui.type.ImString;
 
 
 
@@ -100,10 +102,19 @@ public class Main {
 	public int HEIGHT = 1000;
 	public inputHandler inputHandler;
 	public World world;
+	
+	
+	// GUI Window Stuff
 	public ImGuiIO io;	
 	public ImGuiImplGlfw imGuiGlfw;
 	public ImGuiImplGl3 imGuiGl3;
 
+	public static boolean FlipRotation=false;
+	public String flipLabel = "Rotate first";
+	public boolean check = true;
+	public char charVar = 'a';
+	private static final ImString STR = new ImString();
+	public float[] colour1= {0.5f,0.0f,0.0f};
 
 	
 	public static void main(String[] args) throws Exception {
@@ -312,7 +323,33 @@ public class Main {
 
 	}
 
-	private static void process() {
-        ImGui.text("Hello, World!");
-    }
+	private  void process() {
+	// https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
+	// https://pixtur.github.io/mkdocs-for-imgui/site/api-imgui/ImGui--Dear-ImGui-end-user/
+
+		ImGui.text("Hello, World!");
+		if (ImGui.button("Close Me"))
+				glfwSetWindowShouldClose(glfwGetCurrentContext(), true);
+		if (ImGui.button(flipLabel)) {
+				FlipRotation = !FlipRotation;
+				if (flipLabel.equals("Rotate first"))
+					flipLabel = "Translate first";
+				else
+					flipLabel = "Rotate first";	
+		}
+		if (ImGui.collapsingHeader("Chuckles")){
+			ImGui.bulletText("1. Ahahahaha!");
+			ImGui.bulletText("2. Hehehehe!");
+		}
+
+		
+    ImGui.checkbox("checkbox", check);
+
+		// select key	
+		ImGui.inputText("Key for ..", STR);
+		
+
+		ImGui.colorEdit3("Colour 1", colour1);
+
+	}
 }

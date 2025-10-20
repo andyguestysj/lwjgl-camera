@@ -46,19 +46,22 @@ private Mesh mesh;
 
 public Matrix4f getTransforms(){
     Matrix4f myMatrix = new Matrix4f();
+
+		if (!Main.FlipRotation){
     myMatrix.identity().translate(translation).
 		  rotateX((float)Math.toRadians(rotation.x)).
       rotateY((float)Math.toRadians(rotation.y)).
       rotateZ((float)Math.toRadians(rotation.z)).
       
 			scale(scale);
-/*
+		} else {
+
 			myMatrix.identity().rotateX((float)Math.toRadians(rotation.x)).
       rotateY((float)Math.toRadians(rotation.y)).
       rotateZ((float)Math.toRadians(rotation.z)).
       translate(translation).
 			scale(scale);
-			*/
+		}
   return myMatrix;
 }
 
