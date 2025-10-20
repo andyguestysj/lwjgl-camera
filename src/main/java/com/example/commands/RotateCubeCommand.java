@@ -1,17 +1,19 @@
 package com.example.commands;
 
 
-import com.example.World;
+import com.example.Main;
+import com.example.Object;
 
 import java.util.Vector;
 
 import org.joml.Vector3f;
 
-public class RotateWorldCommand implements Command {
+public class RotateCubeCommand implements Command {
   
   private boolean clockwise;
   public int direction;
-  private World world;
+  private Main main;
+  private Object cube;
 
   public static int X = 0;
   public static int Y = 1;
@@ -19,15 +21,16 @@ public class RotateWorldCommand implements Command {
 
 
 
-  public RotateWorldCommand(World world, int direction, boolean cw){
-    this.world = world;
+  public RotateCubeCommand(Main main, Object cube, int direction, boolean cw){    
     clockwise = cw;
     this.direction = direction;
+    this.cube = cube;
+    this.main = main;
   }
 
   @Override
   public void execute() {
-    Vector3f rotation = world.getRotation();
+    Vector3f rotation = cube.getRotation();
     if (direction==X){
       if (clockwise)         
         rotation.x += 1f;
@@ -40,7 +43,7 @@ public class RotateWorldCommand implements Command {
       else 
         rotation.y -= 1f;
     }
-    world.setRotation(rotation);
+    cube.setRotation(rotation);
   }
   public Command getCommand() { return this;  };
 }

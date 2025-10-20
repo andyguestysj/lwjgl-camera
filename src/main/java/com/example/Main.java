@@ -5,9 +5,6 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +12,6 @@ import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
@@ -78,9 +74,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
 import com.example.*;
-
 
 public class Main {
 
@@ -88,59 +82,30 @@ public class Main {
 	private long window;
 	public int programID;
 	public Map<String, Integer> uniforms;
-
-	public ArrayList<Mesh> meshObjects;
-	public Mesh cube;
-	public Mesh ground;
-
-
-	public float rotateX;
-	public float rotateY;
-	public float rotateZ;
-
-
-
-
-
+	public ArrayList<Mesh> meshObjects;	
 	private static final float FOV = (float) Math.toRadians(60.0f);
 	private static final float Z_NEAR = 0.01f;
 	private static final float Z_FAR = 1000.f;
 	private Matrix4f projectionMatrix;
 	private Matrix4f worldMatrix;
-
 	public int WIDTH = 1000;
 	public int HEIGHT = 1000;
-
-	public 	Vector3f offset;
-	public 	Vector3f rotation;
-	public 	float scale;
-
 	public inputHandler inputHandler;
+	public World world;
+
 	
 	public static void main(String[] args) throws Exception {
 		new Main().run();
 	}
 
 	public void run() throws Exception {
-		
-
-		
-
 		init_window();
-
-		initialiseWorldView();
 		initialiseGraphics();
-
-		inputHandler = new inputHandler(this);
-
-
-		makeObjects();
-	
+		world = new World();
+		inputHandler = new inputHandler(this, world);
 		loop();
-
 		cleanup();
 	}
-
 
 	private void loop() {
 		// Run the rendering loop until the user has attempted to close
@@ -148,13 +113,9 @@ public class Main {
 		while ( !glfwWindowShouldClose(window) ) {		
 			// read input
 			inputHandler.processInput();
-
 			// update
-
 			inputHandler.executeCommands();
-
 			// render
-
 			Render();
 
 			glfwSwapBuffers(window); // swap the color buffers
@@ -165,7 +126,8 @@ public class Main {
 		}
 	}
 
-	public void Render() {
+	public void Render() {		
+		Matrix4f localMatrix;		
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -175,22 +137,20 @@ public class Main {
 		}
 		setUniform("projectionMatrix", projectionMatrix);
 
-		Matrix4f localWorldMatrix = getWorldMatrix();
-
-
-		for (Mesh aMesh : meshObjects){
-			Vector3f aPos = aMesh.getPos();
-			localWorldMatrix = getWorldMatrix();
-			localWorldMatrix.translate(aPos);
-			setUniform("worldMatrix", localWorldMatrix);			
-			glBindVertexArray(aMesh.getMeshID());
+		for (Object anObject : world.objects){	
 			
-    		glDrawElements(GL_TRIANGLES, aMesh.getVertexCount(), GL_UNSIGNED_INT, 0);	
+			worldMatrix = world.getWorldMatrix();	
+			localMatrix = anObject.getTransforms();
+
+			worldMatrix.mul(localMatrix);
+			setUniform("worldMatrix", worldMatrix);			
+			Mesh aMesh = anObject.getMesh();
+			glBindVertexArray(aMesh.getMeshID());
+			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
 		}
+
 		glBindVertexArray(0);
 		glUseProgram(0);
-
-		
 	}
 
 	private void init_window() {
@@ -252,131 +212,17 @@ public class Main {
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	public void initialiseWorldView(){
-
-		rotation = new Vector3f(0,0,0);
-		offset = new Vector3f(0,0,-5f);
-		scale = 1;
-		}
-
 	public void initialiseGraphics() throws Exception{
-
 		uniforms = new HashMap<>();
 		programID = Shaders.makeShaders();
 		worldMatrix = new Matrix4f();
 		createUniform("projectionMatrix");
 		createUniform("worldMatrix");
-
-		}
-
-	public void makeObjects(){
-		meshObjects = new ArrayList<Mesh>();
-		meshObjects.add(makeCube(1f, new Vector3f(0f,0.5f,0f)));
-		meshObjects.add(makeCube(0.5f, new Vector3f(2f,0.25f,0f)));
-
-		float[] col1 = {0.25f,0f,0f};
-		float[] col2 = {0f,0.25f,0f};
-
-		int count=0;
-		for (int x=0; x<11; x++){
-			for (int z=0; z<11; z++){
-				if (count%2==0)
-					meshObjects.add(makeSquare(x-5f, z-5f, 1.0f, col1));
-				else
-					meshObjects.add(makeSquare(x-5f, z-5f, 1.0f, col2));
-				count++;
-			}
-		}
-
 	}
-
-
-	public Mesh makeCube(float size, Vector3f translate){
-
-		float offset = size / 2f;
-
-		float[] positions = new float[]{
-			// VO
-			-offset,  offset,  offset,
-			// V1
-			-offset, -offset,  offset,
-			// V2
-			offset, -offset,  offset,
-			// V3
-			offset,  offset,  offset,
-			// V4
-			-offset,  offset, -offset,
-			// V5
-			offset,  offset, -offset,
-			// V6
-			-offset, -offset, -offset,
-			// V7
-			offset, -offset, -offset,
-};
-
-		float[] colors = new float[]{
-			0.5f, 0.0f, 0.0f,
-			0.0f, 0.5f, 0.0f,
-			0.0f, 0.0f, 0.5f,
-			0.0f, 0.5f, 0.5f,
-			0.5f, 0.0f, 0.0f,
-			0.0f, 0.5f, 0.0f,
-			0.0f, 0.0f, 0.5f,
-			0.0f, 0.5f, 0.5f,
-		};
-		int[] indices = new int[]{
-		 // Front face
-		 0, 1, 3, 3, 1, 2,
-		 // Top Face
-		 4, 0, 3, 5, 4, 3,
-		 // Right face
-		 3, 2, 7, 5, 3, 7,
-		 // Left face
-		 6, 1, 0, 6, 0, 4,
-		 // Bottom face
-		 2, 1, 6, 2, 6, 7,
-		 // Back face
-		 7, 6, 4, 7, 4, 5,
-		};
-
-		return new Mesh("Cube", positions, colors, indices, translate);
-
-	}
-
-	
-
-	public Mesh makeSquare(float x, float z, float size, float[] col){
-		float[] positions = new float[]{
-			x, 0f, z,
-			x+size, 0f, z,
-			x+size, 0f, z+size,
-			x, 0f, z+size
-		};
-
-		float[] colors = new float[]{
-				col[0], col[1], col[2],
-				col[0], col[1], col[2],
-				col[0], col[1], col[2],
-				col[0], col[1], col[2]
-		};
-
-		int[] indices = new int[]{
-			0, 1, 2, // first triangle
-			0, 2, 3  // second triangle
-		};
-
-		return new Mesh("Square", positions, colors, indices);
-	}
-
-
-	
-	
 
 	public void cleanup() {
 		//vboIdList.forEach(GL30::glDeleteBuffers);
-		for (Mesh aMesh : meshObjects){
-			glDeleteVertexArrays(aMesh.getMeshID());
-		}
+		world.cleanUpObjects();
 		
 		
 		// Free the window callbacks and destroy the window
@@ -388,22 +234,13 @@ public class Main {
 		glfwSetErrorCallback(null).free();
 }
 
-	public Matrix4f getWorldMatrix() {
-		worldMatrix.identity().translate(offset).
-			rotateX((float)Math.toRadians(rotation.x)).
-			rotateY((float)Math.toRadians(rotation.y)).
-			rotateZ((float)Math.toRadians(rotation.z)).
-			scale(scale);
-		return worldMatrix;
-	}
-
 	public void createUniform(String uniformName) throws Exception {
-    int uniformLocation = glGetUniformLocation(programID, uniformName);
-    if (uniformLocation < 0) {
+		int uniformLocation = glGetUniformLocation(programID, uniformName);
+		if (uniformLocation < 0) {
 			System.out.println("createUniform error");
-      throw new Exception("Could not find uniform:" + uniformName);				
-    }
-    uniforms.put(uniformName, uniformLocation);
+			throw new Exception("Could not find uniform:" + uniformName);				
+		}
+		uniforms.put(uniformName, uniformLocation);
 	}
 
 	public void setUniform(String uniformName, Matrix4f value) {
@@ -415,9 +252,7 @@ public class Main {
 		}
 	}
 
-
 	public void keyCallBack(int key, int action) {
-
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop				
 		}
@@ -427,6 +262,4 @@ public class Main {
 			else if (key == i && action == GLFW_RELEASE) inputHandler.releaseKey(i);
 		}
 	}
-
-
 }

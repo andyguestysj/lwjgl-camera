@@ -1,43 +1,51 @@
 package com.example.commands;
 
+import org.joml.Vector3f;
+
 import com.example.Main;
+import com.example.Object;
 
 public class MoveCubeCommand implements Command {
   
   private boolean direction;
   public int axis;
   private Main main;
+  private Object cube;
 
 
 
 
-  public MoveCubeCommand(Main main, int axis, boolean direction){
+  public MoveCubeCommand(Main main, Object cube, int axis, boolean direction){
     this.main = main;
     this.axis = axis;
     this.direction = direction;
+    this.cube = cube;
   }
 
   @Override
   public void execute() {
+
+    Vector3f translation = cube.getTranslation();
     if (axis==X) {
       if (direction)
-        main.meshObjects.getFirst().setPosX(0.01f);
+        translation.x +=0.01f;        
       else
-        main.meshObjects.getFirst().setPosX(-0.01f);
+        translation.x -=0.01f;      
     }
     else if (axis==Y) {
       if (direction)
-        main.meshObjects.getFirst().setPosY(0.01f);
+        translation.y +=0.01f;
       else
-        main.meshObjects.getFirst().setPosY(-0.01f);
+        translation.y -=0.01f;
     }
     else if (axis==Z) {
       if (direction)
-        main.meshObjects.getFirst().setPosZ(0.01f);
+        translation.z +=0.01f;
       else
-        main.meshObjects.getFirst().setPosZ(-0.01f);
-      
+        translation.z -=0.01f;
     }
+    cube.setTranslation(translation);
+
   }
 
   public Command getCommand() { return this;  };

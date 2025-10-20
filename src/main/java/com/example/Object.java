@@ -1,0 +1,191 @@
+package com.example;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+
+public class Object {
+
+private String name;
+private String type;
+private float size;
+private	Vector3f translation;
+private	Vector3f rotation;
+private	float scale;
+private Mesh mesh;
+
+
+  public Object(String name, String type, float size, Vector3f translation, Vector3f rotation, Vector3f scale ) {
+    this.name = name;
+    this.type = type;
+    this.size = size;
+    this.translation = translation;
+    this.rotation = rotation;
+    this.scale = size;  
+
+    if (this.type.equals("Cube")){      
+      this.mesh = makeCube(this.size);      
+    }
+    else if (this.type.equals("Square")){
+			float[] col1 = {0.5f,0.0f,0.0f};
+			float[] col2 = {0.0f,0.5f,0.0f};
+
+			/*
+			System.out.print("Making square at : " + this.translation.x + "," + this.translation.y + "," + this.translation.z + " : ");
+			System.err.print("col1 : " + col1[0] + "," + col1[1] + "," + col1[2] + " : ");
+			System.err.println("col2 : " + col2[0] + "," + col2[1] + "," + col2[2] + " : ");
+			*/
+
+			if (name.equals("col1"))
+				this.mesh = makeSquare(this.size, col1);
+			else
+				this.mesh = makeSquare(this.size, col2);
+    }
+    
+  }
+
+public Matrix4f getTransforms(){
+    Matrix4f myMatrix = new Matrix4f();
+    myMatrix.identity().translate(translation).
+		  rotateX((float)Math.toRadians(rotation.x)).
+      rotateY((float)Math.toRadians(rotation.y)).
+      rotateZ((float)Math.toRadians(rotation.z)).
+      
+			scale(scale);
+/*
+			myMatrix.identity().rotateX((float)Math.toRadians(rotation.x)).
+      rotateY((float)Math.toRadians(rotation.y)).
+      rotateZ((float)Math.toRadians(rotation.z)).
+      translate(translation).
+			scale(scale);
+			*/
+  return myMatrix;
+}
+
+public Mesh getMesh() {
+    return mesh;
+  }
+
+public Mesh makeCube(float size){
+
+		float offset = size / 2f;
+
+		float[] positions = new float[]{
+			// VO
+			-offset,  offset,  offset,
+			// V1
+			-offset, -offset,  offset,
+			// V2
+			offset, -offset,  offset,
+			// V3
+			offset,  offset,  offset,
+			// V4
+			-offset,  offset, -offset,
+			// V5
+			offset,  offset, -offset,
+			// V6
+			-offset, -offset, -offset,
+			// V7
+			offset, -offset, -offset,
+};
+
+		float[] colors = new float[]{
+			0.5f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f,
+			0.0f, 0.0f, 0.5f,
+			0.0f, 0.5f, 0.5f,
+			0.5f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f,
+			0.0f, 0.0f, 0.5f,
+			0.0f, 0.5f, 0.5f,
+		};
+		int[] indices = new int[]{
+		 // Front face
+		 0, 1, 3, 3, 1, 2,
+		 // Top Face
+		 4, 0, 3, 5, 4, 3,
+		 // Right face
+		 3, 2, 7, 5, 3, 7,
+		 // Left face
+		 6, 1, 0, 6, 0, 4,
+		 // Bottom face
+		 2, 1, 6, 2, 6, 7,
+		 // Back face
+		 7, 6, 4, 7, 4, 5,
+		};
+
+    //System.out.println("Creating cube mesh with "+positions.length/3+" vertices and "+indices.length/3+" triangles.");
+		return new Mesh("Cube", positions, colors, indices);
+   
+
+	}
+
+	
+
+	public Mesh makeSquare(float size, float[] col){
+    float offset = size / 2f;
+		float[] positions = new float[]{
+			-offset, 0f, -offset,
+			offset, 0f, -offset,
+			offset, 0f, offset,
+			-offset, 0f, offset
+		};
+
+		float[] colors = new float[]{
+				col[0], col[1], col[2],
+				col[0], col[1], col[2],
+				col[0], col[1], col[2],
+				col[0], col[1], col[2]
+		};
+
+		
+		int[] indices = new int[]{
+			0, 1, 2, // first triangle
+			0, 2, 3  // second triangle
+		};
+
+
+		/*
+		System.out.print("Creating square : ");
+		for (int i=0; i<positions.length; i+=3){
+			System.out.print(" (" + positions[i] + "," + positions[i+1] + "," + positions[i+2] + ") ");
+		}
+		System.out.print("Colours : ");
+		for (int i=0; i<colors.length; i+=3){
+			System.out.print(" (" + colors[i] + "," + colors[i+1] + "," + colors[i+2] + ") ");
+		}	
+		System.out.println();
+		System.out.println();
+		*/
+		return new Mesh("Square", positions, colors, indices);
+	}
+
+
+  public Vector3f getRotation() {
+    return rotation;
+  }
+  public void setRotation(Vector3f rotation) {
+    this.rotation = rotation;
+  }
+  public Vector3f getTranslation() {
+    return translation;
+  } 
+  public void setTranslation(Vector3f translation) {
+    this.translation = translation;
+  } 
+  public float getScale() {
+    return scale;
+  }
+  public void setScale(float scale) {
+    this.scale = scale;
+  }
+
+	public String getName() {
+		return name;
+	}
+
+	public void cleanup(){
+		mesh.cleanUp();
+	}
+
+}

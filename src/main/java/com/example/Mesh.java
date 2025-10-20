@@ -31,76 +31,23 @@ public class Mesh {
   public int vertCount;
   public int vaoId;	
 
-  public Vector3f pos;
-
-  
-
-  public Mesh(String name, float[] positions, float[] colours, int[] indices, Vector3f translate) {
-    vertCount = indices.length;
-	this.name = name;
-
-	pos = translate;
-
-    
-    List<Integer> vboIdList;
-
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-
-			vboIdList = new ArrayList<>();
-
-			vaoId = glGenVertexArrays();
-			glBindVertexArray(vaoId);
-
-			int vboId = glGenBuffers();
-			
-			vboIdList.add(vboId);
-			FloatBuffer positionsBuffer = stack.callocFloat(positions.length);
-			positionsBuffer.put(0,positions);
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-			
-
-            // Color VBO
-			vboId = glGenBuffers();
-			vboIdList.add(vboId);
-			FloatBuffer colorsBuffer = stack.callocFloat(colours.length);
-			colorsBuffer.put(0, colours);
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
-
-			// Index VBO
-			vboId = glGenBuffers();
-			vboIdList.add(vboId);
-			IntBuffer indicesBuffer = stack.callocInt(indices.length);
-			indicesBuffer.put(0, indices);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-    }
-  
-  }
 
   public Mesh(String name, float[] positions, float[] colours, int[] indices) {
+		
     vertCount = indices.length;
-	this.name = name;
+		this.name = name;
 
-	
-	pos = new Vector3f(0f,0f,0f);
-    
     List<Integer> vboIdList;
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 
-			vboIdList = new ArrayList<>();
 
+			vboIdList = new ArrayList<>();
 			vaoId = glGenVertexArrays();
+			
 			glBindVertexArray(vaoId);
+
+			
 
 			int vboId = glGenBuffers();
 			
@@ -111,6 +58,7 @@ public class Mesh {
 			glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+			
 			
 
             // Color VBO
@@ -137,61 +85,18 @@ public class Mesh {
   
   }
 
-	public Mesh(float[] positions, int[] indices) {
-    vertCount = indices.length;
-    
-    List<Integer> vboIdList;
-
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-
-			vboIdList = new ArrayList<>();
-
-			vaoId = glGenVertexArrays();
-			glBindVertexArray(vaoId);
-
-			int vboId = glGenBuffers();
-			
-			vboIdList.add(vboId);
-			FloatBuffer positionsBuffer = stack.callocFloat(positions.length);
-			positionsBuffer.put(0,positions);
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 6*Float.BYTES, 0);
-
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 6*Float.BYTES, 3*Float.BYTES);
-
-			// Index VBO
-			vboId = glGenBuffers();
-			vboIdList.add(vboId);
-			IntBuffer indicesBuffer = stack.callocInt(indices.length);
-			indicesBuffer.put(0, indices);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-    }
-  
-  }
-	
 	public int getMeshID() { return vaoId;}
 	public int getVertexCount() { return vertCount;}
 
-	public void setPos(Vector3f vect){
-		
-		pos.set(vect);
+	public void cleanUp(){
+		glDisableVertexAttribArray(0);
+
+		// Delete the VBOs
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDeleteBuffers(vaoId);
+
+		// Delete the VAO
+		glBindVertexArray(0);
+		glDeleteVertexArrays(vaoId);
 	}
-	public Vector3f getPos(){ return pos;}
-
-	public float getPosX(){ return pos.x;}
-	public void setPosX(float deltaX) {pos.add(deltaX,0.0f,0.0f);}
-	public float getPosY(){ return pos.y;}
-	public void setPosY(float deltaY) {pos.add(0f,deltaY,0.0f);}
-	public float getPosZ(){ return pos.z;}
-	public void setPosZ(float deltaZ) {pos.add(0.0f,0.0f,deltaZ);}
-
-	
-
 }
