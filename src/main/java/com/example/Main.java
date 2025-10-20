@@ -327,16 +327,26 @@ public class Main {
 	// https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
 	// https://pixtur.github.io/mkdocs-for-imgui/site/api-imgui/ImGui--Dear-ImGui-end-user/
 
-		ImGui.text("Hello, World!");
+		
 		if (ImGui.button("Close Me"))
 				glfwSetWindowShouldClose(glfwGetCurrentContext(), true);
+
+		ImGui.separatorText("Instructions");		
+		ImGui.text("Move World [Cursor Keys]");
+		ImGui.text("Rotate World [WASD]");
+		ImGui.text("Move Cube [IJKL]");
+		ImGui.text("Rotate Cube [TFGH]");
+
+		ImGui.text("Change large cube transforms");
 		if (ImGui.button(flipLabel)) {
-				FlipRotation = !FlipRotation;
-				if (flipLabel.equals("Rotate first"))
-					flipLabel = "Translate first";
-				else
-					flipLabel = "Rotate first";	
+		FlipRotation = !FlipRotation;
+		if (flipLabel.equals("Rotate first"))
+			flipLabel = "Translate first";
+		else
+			flipLabel = "Rotate first";	
 		}
+
+		ImGui.separatorText("GUI Demos");		
 		if (ImGui.collapsingHeader("Chuckles")){
 			ImGui.bulletText("1. Ahahahaha!");
 			ImGui.bulletText("2. Hehehehe!");
