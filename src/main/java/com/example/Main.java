@@ -76,6 +76,14 @@ import java.nio.file.Paths;
 
 import com.example.*;
 
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
+
+
+
 public class Main {
 
 	// The window handle
@@ -92,6 +100,10 @@ public class Main {
 	public int HEIGHT = 1000;
 	public inputHandler inputHandler;
 	public World world;
+	public ImGuiIO io;	
+	public ImGuiImplGlfw imGuiGlfw;
+	public ImGuiImplGl3 imGuiGl3;
+
 
 	
 	public static void main(String[] args) throws Exception {
@@ -99,8 +111,9 @@ public class Main {
 	}
 
 	public void run() throws Exception {
-		init_window();
+		init_window();		
 		initialiseGraphics();
+		setUpImGui();
 		world = new World();
 		inputHandler = new inputHandler(this, world);
 		loop();
@@ -111,12 +124,28 @@ public class Main {
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {		
+			GL32.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            GL32.glClear(GL32.GL_COLOR_BUFFER_BIT);
 			// read input
 			inputHandler.processInput();
 			// update
 			inputHandler.executeCommands();
 			// render
 			Render();
+
+			imGuiGl3.newFrame();
+			imGuiGlfw.newFrame();						
+			ImGui.newFrame();			
+			process();
+			ImGui.render();
+			imGuiGl3.renderDrawData(ImGui.getDrawData());
+			
+			if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+				final long backupWindowPtr = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
+				ImGui.updatePlatformWindows();
+				ImGui.renderPlatformWindowsDefault();
+				GLFW.glfwMakeContextCurrent(backupWindowPtr);
+			}
 
 			glfwSwapBuffers(window); // swap the color buffers
 
@@ -166,6 +195,7 @@ public class Main {
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+		
 
 		// Create the window
 		window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
@@ -223,8 +253,8 @@ public class Main {
 	public void cleanup() {
 		//vboIdList.forEach(GL30::glDeleteBuffers);
 		world.cleanUpObjects();
-		
-		
+		ImGui.destroyContext();
+
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
@@ -262,4 +292,27 @@ public class Main {
 			else if (key == i && action == GLFW_RELEASE) inputHandler.releaseKey(i);
 		}
 	}
+
+
+	public void setUpImGui() {
+
+        ImGui.createContext();
+        io = ImGui.getIO();
+        io.setIniFilename(null);
+        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
+        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
+        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+				
+        
+
+        imGuiGlfw = new ImGuiImplGlfw();
+        imGuiGlfw.init(window, true);
+        imGuiGl3 = new ImGuiImplGl3();
+        imGuiGl3.init("#version 150");
+
+	}
+
+	private static void process() {
+        ImGui.text("Hello, World!");
+    }
 }
