@@ -167,6 +167,7 @@ public class Main {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			keyCallBack(key, action);
 		});
+		glfwSetMouseButtonCallback(window, (window, button, action, mods) ->  { mouseButtonCallback(window, button, action, mods); } );
 
 		// Get the thread stack and push a new frame
 		try ( MemoryStack stack = stackPush() ) {
@@ -255,6 +256,14 @@ public class Main {
 		}
 	}
 
+	public void mouseButtonCallback(long window, int button, int action, int mods){
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			inputHandler.setMouseLeftButton(true);
+		}
+		else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+			inputHandler.setMouseLeftButton(false);
+		}
+	}
 
 	
 

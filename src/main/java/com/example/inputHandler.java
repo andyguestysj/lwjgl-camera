@@ -8,9 +8,11 @@ public class inputHandler {
   
 	private CommandQueue commandQueue = new CommandQueue();
   private Command[] commands = new Command[350];
+	private Command[] mouseCommands = new Command[5];
 
 
 	private boolean[] keyState = new boolean[350]; // Array to hold button states
+	private boolean[] mouseButtonState = new boolean[5]; // Array to hold mouse button states
 
   public inputHandler(Main main, World world){
 		// rotate world
@@ -36,6 +38,9 @@ public class inputHandler {
 		commands[GLFW_KEY_G] = setButton(new RotateCubeCommand(cube, Command.X, false));
 		commands[GLFW_KEY_F] = setButton(new RotateCubeCommand(cube, Command.Y, true));
 		commands[GLFW_KEY_H] = setButton(new RotateCubeCommand(cube, Command.Y, false));
+
+		// mouse commands
+		mouseCommands[GLFW_MOUSE_BUTTON_LEFT] = setButton(new ExitMenuCommand(main));
 	}
 
 	public void processInput(){
@@ -43,6 +48,11 @@ public class inputHandler {
 		for (int i=0; i<commands.length; i++){
 			if (commands[i] != null && isPressed(i)){
 				commandQueue.addCommand(commands[i]);
+			}
+		}
+		for (int i=0; i<mouseCommands.length; i++){
+			if (mouseCommands[i] != null && mouseButtonState[i]){
+				commandQueue.addCommand(mouseCommands[i]);
 			}
 		}
 	}
@@ -69,5 +79,8 @@ public class inputHandler {
 		commandQueue.executeCommands();
 	}
 
+	public void setMouseLeftButton(boolean state) {		
+		mouseButtonState[GLFW_MOUSE_BUTTON_LEFT] = state;
+	}
 
 }

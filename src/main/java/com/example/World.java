@@ -10,8 +10,7 @@ public class World {
   private	Vector3f translation;
 	private	Vector3f rotation;
 	private	float scale;
-
-  public ArrayList<Mesh> meshObjects;
+  
   public ArrayList<Object> objects;
 
   public World() {

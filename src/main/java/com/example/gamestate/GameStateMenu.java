@@ -12,7 +12,10 @@ import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
+import java.util.ArrayList;
+
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.example.Mesh;
 import com.example.inputHandler;
@@ -23,17 +26,26 @@ import com.example.Object;
 public class GameStateMenu extends GameState {
 
   public GameStateType state;
+  public ArrayList<Object> objects;
+  
 
   public GameStateMenu(){
     state = GameStateType.MENU;    
+    initialise();
   }  
 
   public void initialise(){
+    objects = new ArrayList<Object>();
+    objects.add(new Object("col2", "Square", 1.8f, new Vector3f(0f,0.0f,0f), new Vector3f(90f,0.0f,0f),new Vector3f(1.5f,1f,1f)));
+    objects.add(new Object("col1", "Square", 2f, new Vector3f(0f,0.0f,0f), new Vector3f(90f,0.0f,0f),new Vector3f(1.5f,1f,1f)));
     
   }
 
-  public void update(inputHandler inputHandler){
-
+  public void update(inputHandler inputHandler){    
+    // read input
+    inputHandler.processInput();
+    // update
+    inputHandler.executeCommands();
   }  
 
   public void render(Main main){
@@ -48,9 +60,23 @@ public class GameStateMenu extends GameState {
 		main.setUniform("projectionMatrix", main.projectionMatrix);
 
 
+		for (Object anObject : objects){	
+			
+			main.worldMatrix = main.world.getWorldMatrix();	
+			localMatrix = anObject.getTransforms();
+
+			main.worldMatrix.mul(localMatrix);
+			main.setUniform("worldMatrix", main.worldMatrix);			
+			Mesh aMesh = anObject.getMesh();
+			glBindVertexArray(aMesh.getMeshID());
+			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
+		}
 
 		glBindVertexArray(0);
 		glUseProgram(0);
   }
 
+
+  
 }
+

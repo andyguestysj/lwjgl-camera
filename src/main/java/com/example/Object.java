@@ -147,19 +147,6 @@ public Mesh makeCube(float size){
 			0, 2, 3  // second triangle
 		};
 
-
-		/*
-		System.out.print("Creating square : ");
-		for (int i=0; i<positions.length; i+=3){
-			System.out.print(" (" + positions[i] + "," + positions[i+1] + "," + positions[i+2] + ") ");
-		}
-		System.out.print("Colours : ");
-		for (int i=0; i<colors.length; i+=3){
-			System.out.print(" (" + colors[i] + "," + colors[i+1] + "," + colors[i+2] + ") ");
-		}	
-		System.out.println();
-		System.out.println();
-		*/
 		return new Mesh("Square", positions, colors, indices);
 	}
 
