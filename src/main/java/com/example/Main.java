@@ -143,33 +143,7 @@ public class Main {
 		}
 	}
 
-	public void Render() {		
-		Matrix4f localMatrix;		
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-		glUseProgram(programID);
-		if (glGetProgrami(programID, GL_LINK_STATUS) == 0) {			
-			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(programID, 1024));
-		}
-		setUniform("projectionMatrix", projectionMatrix);
-
-		for (Object anObject : world.objects){	
-			
-			worldMatrix = world.getWorldMatrix();	
-			localMatrix = anObject.getTransforms();
-
-			worldMatrix.mul(localMatrix);
-			setUniform("worldMatrix", worldMatrix);			
-			Mesh aMesh = anObject.getMesh();
-			glBindVertexArray(aMesh.getMeshID());
-			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
-		}
-
-		glBindVertexArray(0);
-		glUseProgram(0);
-	}
-
+	
 	private void init_window() {
 		// Setup an error callback. The default implementation
 		// will print the error message in System.err.
