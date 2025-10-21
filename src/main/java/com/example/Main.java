@@ -75,10 +75,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.example.*;
-
-
-
-
+import com.example.gamestate.*;
 
 public class Main {
 
@@ -90,13 +87,17 @@ public class Main {
 	private static final float FOV = (float) Math.toRadians(60.0f);
 	private static final float Z_NEAR = 0.01f;
 	private static final float Z_FAR = 1000.f;
-	private Matrix4f projectionMatrix;
-	private Matrix4f worldMatrix;
+	public Matrix4f projectionMatrix;
+	public Matrix4f worldMatrix;
 	public int WIDTH = 1000;
 	public int HEIGHT = 1000;
 	public inputHandler inputHandler;
 	public World world;
 	public myImGui myImGui;
+
+	public GameState currentGameState;
+	public GameState game;
+	public GameState menu;
 	
 	// GUI Window Stuff
 
@@ -109,25 +110,28 @@ public class Main {
 	public void run() throws Exception {
 		init_window();		
 		initialiseGraphics();
-		myImGui = new myImGui(window);
+		myImGui = new myImGui(this, window);
+
+		game = new GameStateGame();
+		menu = new GameStateMenu();
+		currentGameState = game;
+
 		world = new World();
 		inputHandler = new inputHandler(this, world);
-		loop();
+		gameLoop();
 		cleanup();
 	}
 
-	private void loop() {
+	private void gameLoop() {
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {		
 			GL32.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
             GL32.glClear(GL32.GL_COLOR_BUFFER_BIT);
-			// read input
-			inputHandler.processInput();
-			// update
-			inputHandler.executeCommands();
-			// render
-			Render();
+			
+			currentGameState.update(inputHandler);
+
+			currentGameState.render(this);
 
 			myImGui.update();
 

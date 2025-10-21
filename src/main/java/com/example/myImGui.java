@@ -10,6 +10,10 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImString;
+import imgui.type.ImInt;
+
+import com.example.Main;
+import com.example.gamestate.GameState;
 
 public class myImGui {
 	public ImGuiIO io;	
@@ -23,7 +27,10 @@ public class myImGui {
 	private static final ImString STR = new ImString();
 	public float[] colour1= {0.5f,0.0f,0.0f};
 
-  public myImGui(long window) {
+  public Main main;
+
+  public myImGui(Main main, long window) {
+    this.main = main;
     setUp(window);
   }
 
@@ -64,6 +71,22 @@ public class myImGui {
     flipLabel = "Rotate first";	
   }
   
+  
+  ImGui.text("Game State");
+  if (ImGui.button("Game")) {
+    if (main.currentGameState.getGameStateType() != GameState.GameStateType.GAME){
+      System.out.println("Switching to GAME state");
+      main.currentGameState = main.game;
+    }
+  }
+  ImGui.sameLine();
+  if (ImGui.button("Menu")) {    
+    if (main.currentGameState.getGameStateType() != GameState.GameStateType.MENU){
+      System.out.println("Switching to MENU state");
+      main.currentGameState = main.menu;
+    }
+  }
+
   ImGui.separatorText("GUI Demos");    		
   if (ImGui.collapsingHeader("Chuckles")){
     ImGui.bulletText("1. Ahahahaha!");
