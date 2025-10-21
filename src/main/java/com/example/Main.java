@@ -76,13 +76,7 @@ import java.nio.file.Paths;
 
 import com.example.*;
 
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiWindowFlags;
-import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
-import imgui.type.ImString;
+
 
 
 
@@ -102,19 +96,10 @@ public class Main {
 	public int HEIGHT = 1000;
 	public inputHandler inputHandler;
 	public World world;
-	
+	public myImGui myImGui;
 	
 	// GUI Window Stuff
-	public ImGuiIO io;	
-	public ImGuiImplGlfw imGuiGlfw;
-	public ImGuiImplGl3 imGuiGl3;
 
-	public static boolean FlipRotation=false;
-	public String flipLabel = "Rotate first";
-	public boolean check = true;
-	public char charVar = 'a';
-	private static final ImString STR = new ImString();
-	public float[] colour1= {0.5f,0.0f,0.0f};
 
 	
 	public static void main(String[] args) throws Exception {
@@ -124,7 +109,7 @@ public class Main {
 	public void run() throws Exception {
 		init_window();		
 		initialiseGraphics();
-		setUpImGui();
+		myImGui = new myImGui(window);
 		world = new World();
 		inputHandler = new inputHandler(this, world);
 		loop();
@@ -144,19 +129,7 @@ public class Main {
 			// render
 			Render();
 
-			imGuiGl3.newFrame();
-			imGuiGlfw.newFrame();						
-			ImGui.newFrame();			
-			process();
-			ImGui.render();
-			imGuiGl3.renderDrawData(ImGui.getDrawData());
-			
-			if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-				final long backupWindowPtr = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
-				ImGui.updatePlatformWindows();
-				ImGui.renderPlatformWindowsDefault();
-				GLFW.glfwMakeContextCurrent(backupWindowPtr);
-			}
+			myImGui.update();
 
 			glfwSwapBuffers(window); // swap the color buffers
 
@@ -264,7 +237,7 @@ public class Main {
 	public void cleanup() {
 		//vboIdList.forEach(GL30::glDeleteBuffers);
 		world.cleanUpObjects();
-		ImGui.destroyContext();
+		myImGui.cleanup();
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -305,61 +278,7 @@ public class Main {
 	}
 
 
-	public void setUpImGui() {
+	
 
-        ImGui.createContext();
-        io = ImGui.getIO();
-        io.setIniFilename(null);
-        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
-        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
-        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
-				
-        
-
-        imGuiGlfw = new ImGuiImplGlfw();
-        imGuiGlfw.init(window, true);
-        imGuiGl3 = new ImGuiImplGl3();
-        imGuiGl3.init("#version 150");
-
-	}
-
-	private  void process() {
-	// https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
-	// https://pixtur.github.io/mkdocs-for-imgui/site/api-imgui/ImGui--Dear-ImGui-end-user/
-
-		
-		if (ImGui.button("Close Me"))
-				glfwSetWindowShouldClose(glfwGetCurrentContext(), true);
-
-		ImGui.separatorText("Instructions");		
-		ImGui.text("Move World [Cursor Keys]");
-		ImGui.text("Rotate World [WASD]");
-		ImGui.text("Move Cube [IJKL]");
-		ImGui.text("Rotate Cube [TFGH]");
-
-		ImGui.text("Change large cube transforms");
-		if (ImGui.button(flipLabel)) {
-		FlipRotation = !FlipRotation;
-		if (flipLabel.equals("Rotate first"))
-			flipLabel = "Translate first";
-		else
-			flipLabel = "Rotate first";	
-		}
-
-		ImGui.separatorText("GUI Demos");		
-		if (ImGui.collapsingHeader("Chuckles")){
-			ImGui.bulletText("1. Ahahahaha!");
-			ImGui.bulletText("2. Hehehehe!");
-		}
-
-		
-    ImGui.checkbox("checkbox", check);
-
-		// select key	
-		ImGui.inputText("Key for ..", STR);
-		
-
-		ImGui.colorEdit3("Colour 1", colour1);
-
-	}
+	
 }

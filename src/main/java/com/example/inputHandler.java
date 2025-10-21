@@ -27,15 +27,15 @@ public class inputHandler {
 
 		// move cube
 		Object cube = world.getObject("Cube1");		
-		commands[GLFW_KEY_I] = setButton(new MoveCubeCommand(main, cube, Command.Z, false));
-		commands[GLFW_KEY_K] = setButton(new MoveCubeCommand(main, cube, Command.Z, true));
-		commands[GLFW_KEY_J] = setButton(new MoveCubeCommand(main, cube, Command.X, false));
-		commands[GLFW_KEY_L] = setButton(new MoveCubeCommand(main, cube, Command.X, true));						
+		commands[GLFW_KEY_I] = setButton(new MoveCubeCommand(cube, Command.Z, false));
+		commands[GLFW_KEY_K] = setButton(new MoveCubeCommand(cube, Command.Z, true));
+		commands[GLFW_KEY_J] = setButton(new MoveCubeCommand(cube, Command.X, false));
+		commands[GLFW_KEY_L] = setButton(new MoveCubeCommand(cube, Command.X, true));						
 		
-		commands[GLFW_KEY_T] = setButton(new RotateCubeCommand(main, cube, Command.X, true));
-		commands[GLFW_KEY_G] = setButton(new RotateCubeCommand(main, cube, Command.X, false));
-		commands[GLFW_KEY_F] = setButton(new RotateCubeCommand(main, cube, Command.Y, true));
-		commands[GLFW_KEY_H] = setButton(new RotateCubeCommand(main, cube, Command.Y, false));
+		commands[GLFW_KEY_T] = setButton(new RotateCubeCommand(cube, Command.X, true));
+		commands[GLFW_KEY_G] = setButton(new RotateCubeCommand(cube, Command.X, false));
+		commands[GLFW_KEY_F] = setButton(new RotateCubeCommand(cube, Command.Y, true));
+		commands[GLFW_KEY_H] = setButton(new RotateCubeCommand(cube, Command.Y, false));
 	}
 
 	public void processInput(){

@@ -1,18 +1,13 @@
 package com.example.commands;
 
-
-import com.example.Main;
 import com.example.Object;
-
-import java.util.Vector;
 
 import org.joml.Vector3f;
 
 public class RotateCubeCommand implements Command {
   
   private boolean clockwise;
-  public int direction;
-  private Main main;
+  public int direction;  
   private Object cube;
 
   public static int X = 0;
@@ -21,11 +16,10 @@ public class RotateCubeCommand implements Command {
 
 
 
-  public RotateCubeCommand(Main main, Object cube, int direction, boolean cw){    
+  public RotateCubeCommand(Object cube, int direction, boolean cw){    
     clockwise = cw;
     this.direction = direction;
-    this.cube = cube;
-    this.main = main;
+    this.cube = cube;    
   }
 
   @Override

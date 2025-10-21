@@ -47,7 +47,7 @@ private Mesh mesh;
 public Matrix4f getTransforms(){
     Matrix4f myMatrix = new Matrix4f();
 
-		if (!Main.FlipRotation){
+		if (!myImGui.getFlipRotation()){
     myMatrix.identity().translate(translation).
 		  rotateX((float)Math.toRadians(rotation.x)).
       rotateY((float)Math.toRadians(rotation.y)).

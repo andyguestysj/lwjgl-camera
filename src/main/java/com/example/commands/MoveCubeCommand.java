@@ -2,21 +2,18 @@ package com.example.commands;
 
 import org.joml.Vector3f;
 
-import com.example.Main;
 import com.example.Object;
 
 public class MoveCubeCommand implements Command {
   
   private boolean direction;
-  public int axis;
-  private Main main;
+  public int axis;  
   private Object cube;
 
 
 
 
-  public MoveCubeCommand(Main main, Object cube, int axis, boolean direction){
-    this.main = main;
+  public MoveCubeCommand(Object cube, int axis, boolean direction){    
     this.axis = axis;
     this.direction = direction;
     this.cube = cube;
