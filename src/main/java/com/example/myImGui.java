@@ -52,7 +52,7 @@ public class myImGui {
 
 	}
 
-  private  void process() {
+  private  void process(inputHandler inputHandler) {
 	// https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
 	// https://pixtur.github.io/mkdocs-for-imgui/site/api-imgui/ImGui--Dear-ImGui-end-user/
   	
@@ -61,6 +61,11 @@ public class myImGui {
   ImGui.text("Rotate World [WASD]");
   ImGui.text("Move Cube [IJKL]");
   ImGui.text("Rotate Cube [TFGH]");
+
+  ImGui.text("Mouse Position");
+  ImGui.sameLine(150); ImGui.text("x=" + inputHandler.getMouseX());
+  ImGui.sameLine(300); ImGui.text("y=" + inputHandler.getMouseY());
+
 
   ImGui.text("Change large cube transforms");
   if (ImGui.button(flipLabel)) {
@@ -115,11 +120,11 @@ public class myImGui {
   //ImGui.logFinish();
 }
 
-  public void update() {
+  public void update(inputHandler inputHandler) {
     imGuiGl3.newFrame();
 			imGuiGlfw.newFrame();						
 			ImGui.newFrame();			
-			process();
+			process(inputHandler);
 			ImGui.render();
 			imGuiGl3.renderDrawData(ImGui.getDrawData());
 			

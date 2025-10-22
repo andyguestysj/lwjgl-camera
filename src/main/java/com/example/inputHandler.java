@@ -9,6 +9,7 @@ public class inputHandler {
 	private CommandQueue commandQueue = new CommandQueue();
   private Command[] commands = new Command[350];
 	private Command[] mouseCommands = new Command[5];
+	private double mouseX, mouseY;
 
 
 	private boolean[] keyState = new boolean[350]; // Array to hold button states
@@ -83,4 +84,16 @@ public class inputHandler {
 		mouseButtonState[GLFW_MOUSE_BUTTON_LEFT] = state;
 	}
 
+	public void setMousePosition(double x, double y) {
+		this.mouseX = x;
+		this.mouseY = y;
+	}
+
+	public double getMouseX() {
+		return mouseX;
+	}
+	
+	public double getMouseY() {
+		return mouseY;
+	}
 }

@@ -133,7 +133,7 @@ public class Main {
 
 			currentGameState.render(this);
 
-			myImGui.update();
+			myImGui.update(inputHandler);
 
 			glfwSwapBuffers(window); // swap the color buffers
 
@@ -168,6 +168,7 @@ public class Main {
 			keyCallBack(key, action);
 		});
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) ->  { mouseButtonCallback(window, button, action, mods); } );
+		glfwSetCursorPosCallback(window, (window, xpos, ypos) ->  { mousePositionCallback(window, xpos, ypos); } );
 
 		// Get the thread stack and push a new frame
 		try ( MemoryStack stack = stackPush() ) {
@@ -265,7 +266,9 @@ public class Main {
 		}
 	}
 
-	
+	public void mousePositionCallback(long window, double xpos,double ypos){
+		inputHandler.setMousePosition(xpos, ypos);
+	}	
 
 	
 }
