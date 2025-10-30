@@ -29,6 +29,8 @@ public class myImGui {
 
   public Main main;
 
+  public int scale=3;
+
   public myImGui(Main main, long window) {
     this.main = main;
     setUp(window);
@@ -42,7 +44,8 @@ public class myImGui {
         io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
-				
+
+        
         
 
         imGuiGlfw = new ImGuiImplGlfw();
@@ -56,85 +59,71 @@ public class myImGui {
 	// https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
 	// https://pixtur.github.io/mkdocs-for-imgui/site/api-imgui/ImGui--Dear-ImGui-end-user/
   	
-    ImGui.separatorText("Instructions");
-    ImGui.text("Move World [Cursor Keys]");
-    ImGui.text("Rotate World [WASD]");
-    ImGui.text("Move Cube [IJKL]");
-    ImGui.text("Rotate Cube [TFGH]");
-
-    ImGui.text("Mouse Position");
-    ImGui.sameLine(150); ImGui.text("x=" + inputHandler.getMouseX());
-    ImGui.sameLine(300); ImGui.text("y=" + inputHandler.getMouseY());
-
-
-    ImGui.text("Change large cube transforms");
-    if (ImGui.button(flipLabel)) {
-    FlipRotation = !FlipRotation;
-    if (flipLabel.equals("Rotate first"))
-      flipLabel = "Translate first";
-    else
-      flipLabel = "Rotate first";	
-    }
     
-        
-    ImGui.text("Game State");
-    if (ImGui.button("Game")) {
-      if (main.currentGameState.getGameStateType() != GameState.GameStateType.GAME){
-        System.out.println("Switching to GAME state");
-        main.currentGameState = main.game;
+    ImGui.begin("Debug Window");
+      ImGui.setWindowFontScale(scale);
+
+      ImGui.separatorText("Instructions");
+      ImGui.text("Move Camera [WASDZX]");
+      ImGui.text("Move Cube [IJKL] : Rotate Cube [TFGH]");
+
+      ImGui.separatorText("Data");
+      ImGui.text("Mouse Position");
+      ImGui.sameLine(scale*150); ImGui.text("x=" + inputHandler.getMouseX());
+      ImGui.sameLine(scale*250); ImGui.text("y=" + inputHandler.getMouseY());
+
+      ImGui.text("Camera Position");
+      ImGui.sameLine(scale*150); ImGui.text("x=" + main.camera.getPosition().x);
+      ImGui.sameLine(scale*250); ImGui.text("y=" + main.camera.getPosition().y);
+      ImGui.sameLine(scale*350); ImGui.text("z=" + main.camera.getPosition().z);
+
+      ImGui.separatorText("Actions");
+      ImGui.text("Change large cube transforms");
+      if (ImGui.button(flipLabel)) {
+      FlipRotation = !FlipRotation;
+      if (flipLabel.equals("Rotate first"))
+        flipLabel = "Translate first";
+      else
+        flipLabel = "Rotate first";	
       }
-    }
-    ImGui.sameLine();
-    if (ImGui.button("Menu")) {    
-      if (main.currentGameState.getGameStateType() != GameState.GameStateType.MENU){
-        System.out.println("Switching to MENU state");
-        main.currentGameState = main.menu;
+      
+          
+      ImGui.text("Game State");
+      if (ImGui.button("Game")) {
+        if (main.currentGameState.getGameStateType() != GameState.GameStateType.GAME){
+          System.out.println("Switching to GAME state");
+          main.currentGameState = main.game;
+        }
       }
-    }
-
-    ImGui.separatorText("GUI Demos");    		
-    if (ImGui.collapsingHeader("Chuckles")){
-      ImGui.bulletText("1. Ahahahaha!");
-      ImGui.bulletText("2. Hehehehe!");
-    }              
-    ImGui.checkbox("checkbox", check);              
-    
-    ImGui.inputText("Key for ..", STR);     
-    ImGui.sameLine();
-    HelpMarker("USER:\n" +
-      "Hold SHIFT or use mouse to select text.\n" +
-      "CTRL+Left/Right to word jump.\n" +
-      "CTRL+A or Double-Click to select all.\n" +
-      "CTRL+X,CTRL+C,CTRL+V for clipboard.\n" +
-      "CTRL+Z to undo, CTRL+Y/CTRL+SHIFT+Z to redo.\n" +
-      "ESCAPE to revert.\n\n" +
-      "PROGRAMMER:\n" +
-      "You can use the ImGuiInputTextFlags_CallbackResize facility if you need to wire InputText() " +
-      "to a dynamic string type. See misc/cpp/imgui_stdlib.h for an example (this is not demonstrated " +
-      "in imgui_demo.cpp).");
-
-    ImGui.colorEdit3("Colour 1", colour1);
-
-    ImGui.logButtons();
-    ImGui.logText("message to log");
-    //ImGui.logFinish();
+      ImGui.sameLine();
+      if (ImGui.button("Menu")) {    
+        if (main.currentGameState.getGameStateType() != GameState.GameStateType.MENU){
+          System.out.println("Switching to MENU state");
+          main.currentGameState = main.menu;
+        }
+      }
+      
+    ImGui.end();
 }
 
   public void update(inputHandler inputHandler) {
     imGuiGl3.newFrame();
-			imGuiGlfw.newFrame();						
-			ImGui.newFrame();			
-			process(inputHandler);
-			ImGui.render();
-			imGuiGl3.renderDrawData(ImGui.getDrawData());
-			
-			if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-				final long backupWindowPtr = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
-				ImGui.updatePlatformWindows();
-				ImGui.renderPlatformWindowsDefault();
-				GLFW.glfwMakeContextCurrent(backupWindowPtr);
-			}
-  }
+    imGuiGlfw.newFrame();						
+    ImGui.newFrame();			
+
+    process(inputHandler);
+    
+    ImGui.render();
+    imGuiGl3.renderDrawData(ImGui.getDrawData());
+    
+    if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+      final long backupWindowPtr = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
+      ImGui.updatePlatformWindows();
+      ImGui.renderPlatformWindowsDefault();
+      GLFW.glfwMakeContextCurrent(backupWindowPtr);
+    }
+  
+}
 
   public void cleanup() {
     ImGui.logFinish();

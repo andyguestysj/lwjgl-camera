@@ -3,30 +3,35 @@ package com.example;
 import static org.lwjgl.glfw.GLFW.*;
 
 import com.example.commands.*;
+import com.example.gamestate.GameState;
 
 public class inputHandler {
   
 	private CommandQueue commandQueue = new CommandQueue();
   private Command[] commands = new Command[350];
 	private Command[] mouseCommands = new Command[5];
-	private double mouseX, mouseY;
-
-
+	
 	private boolean[] keyState = new boolean[350]; // Array to hold button states
 	private boolean[] mouseButtonState = new boolean[5]; // Array to hold mouse button states
+
+	private double mouseX, mouseY;
+	private double deltaX, deltaY;
+	private boolean firstMouse = true;
+	private float mouseSensitivity = 0.1f;
+
+	private Main main;
 
   public inputHandler(Main main, World world){
 		// rotate world
 
-		commands[GLFW_KEY_W] = setButton(new RotateWorldCommand(world, Command.X, true));
-		commands[GLFW_KEY_S] = setButton(new RotateWorldCommand(world, Command.X, false));
-		commands[GLFW_KEY_A] = setButton(new RotateWorldCommand(world, Command.Y, true));
-		commands[GLFW_KEY_D] = setButton(new RotateWorldCommand(world, Command.Y, false));
-		
-		commands[GLFW_KEY_UP] = setButton(new MoveWorldCommand(world, Command.Z, true));
-		commands[GLFW_KEY_DOWN] = setButton(new MoveWorldCommand(world, Command.Z, false));
-		commands[GLFW_KEY_LEFT] = setButton(new MoveWorldCommand(world, Command.X, false));
-		commands[GLFW_KEY_RIGHT] = setButton(new MoveWorldCommand(world, Command.X, true));
+		this.main = main;
+
+		commands[GLFW_KEY_W] = setButton(new MoveCameraCommand(main, Command.Z, true));
+		commands[GLFW_KEY_S] = setButton(new MoveCameraCommand(main, Command.Z, false));
+		commands[GLFW_KEY_A] = setButton(new MoveCameraCommand(main, Command.X, false));
+		commands[GLFW_KEY_D] = setButton(new MoveCameraCommand(main, Command.X, true));
+		commands[GLFW_KEY_Z] = setButton(new MoveCameraCommand(main, Command.Y, true));
+		commands[GLFW_KEY_X] = setButton(new MoveCameraCommand(main, Command.Y, false));
 
 		// move cube
 		Object cube = world.getObject("Cube1");		
@@ -55,6 +60,16 @@ public class inputHandler {
 			if (mouseCommands[i] != null && mouseButtonState[i]){
 				commandQueue.addCommand(mouseCommands[i]);
 			}
+		}
+
+		if (main.currentGameState.getGameStateType() != GameState.GameStateType.GAME){			
+			main.camera.setYaw(main.camera.getYaw()+(float)deltaX*mouseSensitivity);
+			main.camera.setPitch(main.camera.getPitch()+(float)deltaY*mouseSensitivity);
+
+			if (main.camera.getPitch()>89.0f) main.camera.setPitch(89.0f);
+			if (main.camera.getPitch()<-89.0f) main.camera.setPitch(-89.0f);
+
+			deltaX = 0f; deltaY = 0f;
 		}
 	}
 
@@ -85,15 +100,22 @@ public class inputHandler {
 	}
 
 	public void setMousePosition(double x, double y) {
+		if (firstMouse){
+			this.mouseX = x;
+			this.mouseY = y;
+			firstMouse = false;
+		}
+
+		deltaX = x - this.mouseX; 
+		deltaY = y - this.mouseY; 
+
 		this.mouseX = x;
 		this.mouseY = y;
 	}
 
-	public double getMouseX() {
-		return mouseX;
-	}
-	
-	public double getMouseY() {
-		return mouseY;
-	}
+	public double getMouseX() { return mouseX; 	}	
+	public double getMouseY() { return mouseY;	}
+	public double getDeltaX() { return deltaX; }
+	public double getDeltaY() { return deltaY; }
+
 }

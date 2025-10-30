@@ -1,80 +1,28 @@
 package com.example;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glColorPointer;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnableClientState;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glRotated;
-import static org.lwjgl.opengl.GL11.glTranslated;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
-import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
-import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glCompileShader;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glCreateShader;
-import static org.lwjgl.opengl.GL20.glDeleteShader;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20.glGetProgrami;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.*;
 
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-import com.example.*;
 import com.example.gamestate.*;
 
 public class Main {
@@ -84,13 +32,8 @@ public class Main {
 	public int programID;
 	public Map<String, Integer> uniforms;
 	public ArrayList<Mesh> meshObjects;	
-	private static final float FOV = (float) Math.toRadians(60.0f);
-	private static final float Z_NEAR = 0.01f;
-	private static final float Z_FAR = 1000.f;
 	public Matrix4f projectionMatrix;
 	public Matrix4f worldMatrix;
-	public int WIDTH = 1000;
-	public int HEIGHT = 1000;
 	public inputHandler inputHandler;
 	public World world;
 	public myImGui myImGui;
@@ -98,9 +41,14 @@ public class Main {
 	public GameState currentGameState;
 	public GameState game;
 	public GameState menu;
-	
-	// GUI Window Stuff
 
+	public Camera camera;
+	
+	public int WIDTH = 1000;
+	public int HEIGHT = 1000;
+	private static final float FOV = (float) Math.toRadians(60.0f);
+	private static final float Z_NEAR = 0.01f;
+	private static final float Z_FAR = 1000.f;
 
 	
 	public static void main(String[] args) throws Exception {
@@ -194,12 +142,14 @@ public class Main {
 		// Enable v-sync
 		glfwSwapInterval(1);
 
+		camera = new Camera(new Vector3f(0, 2, 8), new Vector3f(0f,2f,0f), new Vector3f(0f,1f,0f), WIDTH, HEIGHT, 0.01f, 1000f, (float) Math.toRadians(60.0f), 0f, -90f);		
+
 		// Make the window visible
 		glfwShowWindow(window);
 		GL.createCapabilities();
 		
-		float aspectRatio = (float) WIDTH / HEIGHT;
-		projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,	Z_NEAR, Z_FAR);
+		//float aspectRatio = (float) WIDTH / HEIGHT;
+		//projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,	Z_NEAR, Z_FAR);
 		
 		glMatrixMode(GL_MODELVIEW);
 		glClearColor( 0.0F, 0.0F, 0.0F, 1 );
@@ -211,7 +161,8 @@ public class Main {
 		programID = Shaders.makeShaders();
 		worldMatrix = new Matrix4f();
 		createUniform("projectionMatrix");
-		createUniform("worldMatrix");
+		createUniform("viewMatrix");
+		createUniform("modelMatrix");
 	}
 
 	public void cleanup() {

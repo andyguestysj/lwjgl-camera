@@ -40,25 +40,20 @@ public class GameStateGame extends GameState {
   }  
 
   public void render(Main main){
-    Matrix4f localMatrix;		
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 		glUseProgram(main.programID);
 		if (glGetProgrami(main.programID, GL_LINK_STATUS) == 0) {			
 			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(main.programID, 1024));
 		}
-		main.setUniform("projectionMatrix", main.projectionMatrix);
 
-		for (Object anObject : main.world.objects){	
-			
-			main.worldMatrix = main.world.getWorldMatrix();	
-			localMatrix = anObject.getTransforms();
+		//main.setUniform("viewMatrix", main.camera.getViewMatrix());
+    main.setUniform("viewMatrix", main.camera.getViewMatrixFPS());
+    main.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
 
-			main.worldMatrix.mul(localMatrix);
-			main.setUniform("worldMatrix", main.worldMatrix);			
-			Mesh aMesh = anObject.getMesh();
-			glBindVertexArray(aMesh.getMeshID());
+		for (Object anObject : main.world.objects){				
+			main.setUniform("modelMatrix", anObject.getTransforms());	
+			glBindVertexArray(anObject.getMesh().getMeshID());
 			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
 		}
 
