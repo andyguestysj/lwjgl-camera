@@ -57,8 +57,8 @@ public class Camera {
         return proj;
     }
 
-    public Matrix4f getProjectionProjectionMatrix() {
-        Matrix4f proj = new Matrix4f().identity();
+    public Matrix4f getOrthogaphicProjectionMatrix() {
+        Matrix4f proj = new  Matrix4f().identity();
         return proj;
     }
 
