@@ -52,8 +52,13 @@ public class Camera {
         return view;
     }
 
-    public Matrix4f getProjectionMatrix() {
+    public Matrix4f getPerspectiveProjectionMatrix() {
         Matrix4f proj = new Matrix4f().perspective(fovy, aspectRatio, near, far);
+        return proj;
+    }
+
+    public Matrix4f getProjectionProjectionMatrix() {
+        Matrix4f proj = new Matrix4f().identity();
         return proj;
     }
 

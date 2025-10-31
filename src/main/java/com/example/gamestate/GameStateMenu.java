@@ -55,7 +55,7 @@ public class GameStateMenu extends GameState {
 		}
 
     main.uniforms.setUniform("viewMatrix", main.camera.getViewMatrix());
-    main.uniforms.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
+    main.uniforms.setUniform("projectionMatrix", main.camera.getPerspectiveProjectionMatrix());
 
 
 

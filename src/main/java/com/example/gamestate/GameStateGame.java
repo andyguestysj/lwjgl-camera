@@ -44,7 +44,7 @@ public class GameStateGame extends GameState {
 		}
 
 		main.uniforms.setUniform("viewMatrix", main.camera.getViewMatrixFPS());
-    main.uniforms.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
+    main.uniforms.setUniform("projectionMatrix", main.camera.getPerspectiveProjectionMatrix());
 
     for (Object anObject : main.world.objects){				
 			main.uniforms.setUniform("modelMatrix", anObject.getTransforms());	
