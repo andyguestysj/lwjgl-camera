@@ -14,12 +14,13 @@ public class Camera {
     private float fovy;
     private float pitch;
     private float yaw;
+    private float roll;
 
     public Camera(Vector3f position) {
         this.position = position;                
     }
 
-    public Camera(Vector3f position, Vector3f target, Vector3f up, int width, int height, float near, float far, float fovy, float pitch, float yaw) {
+    public Camera(Vector3f position, Vector3f target, Vector3f up, int width, int height, float near, float far, float fovy, float pitch, float yaw, float roll) {
         this.position = position;
         this.target = target;
         this.up = up;
@@ -30,6 +31,7 @@ public class Camera {
         this.fovy = fovy;
         this.pitch = pitch;
         this.yaw = yaw;
+        this.roll = roll;
         aspectRatio = (float) this.width/this.height;
     }
 
@@ -45,6 +47,7 @@ public class Camera {
         view.identity();
         view.rotate((float) java.lang.Math.toRadians(pitch), new Vector3f(1,0,0))
             .rotate((float) java.lang.Math.toRadians(yaw), new Vector3f(0,1,0))
+            .rotate((float) java.lang.Math.toRadians(roll), new Vector3f(0,0,1))
             .translate(-position.x, -position.y, -position.z);
         return view;
     }

@@ -43,6 +43,9 @@ public class Main {
 	private static final float FOV = (float) Math.toRadians(60.0f);
 	private static final float Z_NEAR = 0.01f;
 	private static final float Z_FAR = 1000.f;
+	private static final float PITCH = 0f;
+	private static final float YAW = -90f;
+	private static final float ROLL = 0f;
 
 	
 	public static void main(String[] args) throws Exception {
@@ -136,7 +139,7 @@ public class Main {
 		// Enable v-sync
 		glfwSwapInterval(1);
 
-		camera = new Camera(new Vector3f(0, 2, 8), new Vector3f(0f,2f,0f), new Vector3f(0f,1f,0f), WIDTH, HEIGHT, Z_NEAR, Z_FAR, FOV, 0f, -90f);		
+		camera = new Camera(new Vector3f(0, 2, 8), new Vector3f(0f,2f,0f), new Vector3f(0f,1f,0f), WIDTH, HEIGHT, Z_NEAR, Z_FAR, FOV, PITCH, YAW, ROLL);		
 
 		// Make the window visible
 		glfwShowWindow(window);
