@@ -12,13 +12,7 @@ import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-
 import static org.lwjgl.opengl.GL30.*;
-import com.example.Utils;
 
 public class Shaders {
 
@@ -59,4 +53,7 @@ public class Shaders {
     return programID;
 
 	}
+
+
+	
 }

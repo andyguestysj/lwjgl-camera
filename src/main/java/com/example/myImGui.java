@@ -5,14 +5,9 @@ import org.lwjgl.glfw.GLFW;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiTabBarFlags;
-import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import imgui.type.ImString;
-import imgui.type.ImInt;
 
-import com.example.Main;
 import com.example.gamestate.GameState;
 
 public class myImGui {
@@ -24,7 +19,6 @@ public class myImGui {
 	public String flipLabel = "Rotate first";
 	public boolean check = true;
 	public char charVar = 'a';
-	private static final ImString STR = new ImString();
 	public float[] colour1= {0.5f,0.0f,0.0f};
 
   public Main main;

@@ -16,10 +16,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Vector3f;
 
 import org.lwjgl.system.MemoryStack;
-import java.util.*;
 
 import static org.lwjgl.opengl.GL30.*;
 

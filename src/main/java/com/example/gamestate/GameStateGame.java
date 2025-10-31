@@ -12,11 +12,7 @@ import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
-import org.joml.Matrix4f;
-
-import com.example.Mesh;
 import com.example.inputHandler;
-import com.example.World;
 import com.example.Main;
 import com.example.Object;
 
@@ -24,12 +20,12 @@ public class GameStateGame extends GameState {
 
   public GameStateType state;
 
+
   public GameStateGame(){
     state = GameStateType.GAME;    
   }  
 
   public void initialise(){
-    
   }
 
   public void update(inputHandler inputHandler){
@@ -42,17 +38,16 @@ public class GameStateGame extends GameState {
   public void render(Main main){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-		glUseProgram(main.programID);
-		if (glGetProgrami(main.programID, GL_LINK_STATUS) == 0) {			
-			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(main.programID, 1024));
+		glUseProgram(main.uniforms.programID);
+		if (glGetProgrami(main.uniforms.programID, GL_LINK_STATUS) == 0) {			
+			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(main.uniforms.programID, 1024));
 		}
 
-		//main.setUniform("viewMatrix", main.camera.getViewMatrix());
-    main.setUniform("viewMatrix", main.camera.getViewMatrixFPS());
-    main.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
+		main.uniforms.setUniform("viewMatrix", main.camera.getViewMatrixFPS());
+    main.uniforms.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
 
-		for (Object anObject : main.world.objects){				
-			main.setUniform("modelMatrix", anObject.getTransforms());	
+    for (Object anObject : main.world.objects){				
+			main.uniforms.setUniform("modelMatrix", anObject.getTransforms());	
 			glBindVertexArray(anObject.getMesh().getMeshID());
 			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
 		}

@@ -13,13 +13,9 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 import java.util.ArrayList;
-
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import com.example.Mesh;
 import com.example.inputHandler;
-import com.example.World;
 import com.example.Main;
 import com.example.Object;
 
@@ -27,6 +23,8 @@ public class GameStateMenu extends GameState {
 
   public GameStateType state;
   public ArrayList<Object> objects;
+
+  
   
 
   public GameStateMenu(){
@@ -37,7 +35,7 @@ public class GameStateMenu extends GameState {
   public void initialise(){
     objects = new ArrayList<Object>();
     objects.add(new Object("col2", "Square", 1.8f, new Vector3f(0f,0.0f,0f), new Vector3f(90f,0.0f,0f),new Vector3f(1.5f,1f,1f)));
-    objects.add(new Object("col1", "Square", 2f, new Vector3f(0f,0.0f,0f), new Vector3f(90f,0.0f,0f),new Vector3f(1.5f,1f,1f)));
+    objects.add(new Object("col1", "Square", 2f, new Vector3f(0f,0.0f,0f), new Vector3f(90f,0.0f,0f),new Vector3f(1.5f,1f,1f))); 
     
   }
 
@@ -51,17 +49,19 @@ public class GameStateMenu extends GameState {
   public void render(Main main){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-		glUseProgram(main.programID);
-		if (glGetProgrami(main.programID, GL_LINK_STATUS) == 0) {			
-			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(main.programID, 1024));
+		glUseProgram(main.uniforms.programID);
+		if (glGetProgrami(main.uniforms.programID, GL_LINK_STATUS) == 0) {			
+			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(main.uniforms.programID, 1024));
 		}
 
-    main.setUniform("viewMatrix", main.camera.getViewMatrix());
-    main.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
+    main.uniforms.setUniform("viewMatrix", main.camera.getViewMatrix());
+    main.uniforms.setUniform("projectionMatrix", main.camera.getProjectionMatrix());
+
+
 
 
 		for (Object anObject : objects){	
-			main.setUniform("modelMatrix", anObject.getTransforms());
+			main.uniforms.setUniform("modelMatrix", anObject.getTransforms());
 			glBindVertexArray(anObject.getMesh().getMeshID());
 			glDrawElements(GL_TRIANGLES, anObject.getMesh().getVertexCount(), GL_UNSIGNED_INT, 0);	
 		}

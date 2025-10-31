@@ -5,8 +5,6 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -17,10 +15,8 @@ import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
-import java.nio.FloatBuffer;
+
 import java.nio.IntBuffer;
 
 import com.example.gamestate.*;
@@ -28,9 +24,7 @@ import com.example.gamestate.*;
 public class Main {
 
 	// The window handle
-	private long window;
-	public int programID;
-	public Map<String, Integer> uniforms;
+	private long window;	
 	public ArrayList<Mesh> meshObjects;	
 	public Matrix4f projectionMatrix;
 	public Matrix4f worldMatrix;
@@ -41,8 +35,8 @@ public class Main {
 	public GameState currentGameState;
 	public GameState game;
 	public GameState menu;
-
 	public Camera camera;
+	public Uniforms uniforms;
 	
 	public int WIDTH = 1000;
 	public int HEIGHT = 1000;
@@ -57,7 +51,7 @@ public class Main {
 
 	public void run() throws Exception {
 		init_window();		
-		initialiseGraphics();
+		uniforms = new Uniforms();
 		myImGui = new myImGui(this, window);
 
 		game = new GameStateGame();
@@ -142,31 +136,18 @@ public class Main {
 		// Enable v-sync
 		glfwSwapInterval(1);
 
-		camera = new Camera(new Vector3f(0, 2, 8), new Vector3f(0f,2f,0f), new Vector3f(0f,1f,0f), WIDTH, HEIGHT, 0.01f, 1000f, (float) Math.toRadians(60.0f), 0f, -90f);		
+		camera = new Camera(new Vector3f(0, 2, 8), new Vector3f(0f,2f,0f), new Vector3f(0f,1f,0f), WIDTH, HEIGHT, Z_NEAR, Z_FAR, FOV, 0f, -90f);		
 
 		// Make the window visible
 		glfwShowWindow(window);
 		GL.createCapabilities();
-		
-		//float aspectRatio = (float) WIDTH / HEIGHT;
-		//projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,	Z_NEAR, Z_FAR);
 		
 		glMatrixMode(GL_MODELVIEW);
 		glClearColor( 0.0F, 0.0F, 0.0F, 1 );
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	public void initialiseGraphics() throws Exception{
-		uniforms = new HashMap<>();
-		programID = Shaders.makeShaders();
-		worldMatrix = new Matrix4f();
-		createUniform("projectionMatrix");
-		createUniform("viewMatrix");
-		createUniform("modelMatrix");
-	}
-
 	public void cleanup() {
-		//vboIdList.forEach(GL30::glDeleteBuffers);
 		world.cleanUpObjects();
 		myImGui.cleanup();
 
@@ -178,24 +159,6 @@ public class Main {
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
 }
-
-	public void createUniform(String uniformName) throws Exception {
-		int uniformLocation = glGetUniformLocation(programID, uniformName);
-		if (uniformLocation < 0) {
-			System.out.println("createUniform error");
-			throw new Exception("Could not find uniform:" + uniformName);				
-		}
-		uniforms.put(uniformName, uniformLocation);
-	}
-
-	public void setUniform(String uniformName, Matrix4f value) {
-		// Dump the matrix into a float buffer
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer fb = stack.mallocFloat(16);
-			value.get(fb);
-			glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
-		}
-	}
 
 	public void keyCallBack(int key, int action) {
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
@@ -219,7 +182,5 @@ public class Main {
 
 	public void mousePositionCallback(long window, double xpos,double ypos){
 		inputHandler.setMousePosition(xpos, ypos);
-	}	
-
-	
+	}		
 }

@@ -30,12 +30,6 @@ private Mesh mesh;
 			float[] col1 = {0.5f,0.0f,0.0f};
 			float[] col2 = {0.0f,0.5f,0.0f};
 
-			/*
-			System.out.print("Making square at : " + this.translation.x + "," + this.translation.y + "," + this.translation.z + " : ");
-			System.err.print("col1 : " + col1[0] + "," + col1[1] + "," + col1[2] + " : ");
-			System.err.println("col2 : " + col2[0] + "," + col2[1] + "," + col2[2] + " : ");
-			*/
-
 			if (name.equals("col1"))
 				this.mesh = makeSquare(this.size, col1);
 			else
